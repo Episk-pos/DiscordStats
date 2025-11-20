@@ -58,46 +58,46 @@ Before you begin, ensure you have:
 
 ### 1. Clone the repository
 
-\`\`\`bash
+```bash
 git clone <repository-url>
 cd DiscordStats
-\`\`\`
+```
 
 ### 2. Install server dependencies
 
-\`\`\`bash
+```bash
 cd server
 npm install
-\`\`\`
+```
 
 ### 3. Configure server environment
 
-\`\`\`bash
+```bash
 cp .env.example .env
-\`\`\`
+```
 
 Edit `.env` and add your Discord credentials:
 
-\`\`\`env
+```env
 DISCORD_BOT_TOKEN=your_bot_token_here
 DISCORD_CLIENT_ID=your_client_id_here
 DISCORD_CLIENT_SECRET=your_client_secret_here
 DISCORD_REDIRECT_URI=http://localhost:5173/auth/callback
 PORT=3001
-\`\`\`
+```
 
 ### 4. Install client dependencies
 
-\`\`\`bash
+```bash
 cd ../client
 npm install
-\`\`\`
+```
 
 ### 5. Configure client environment (optional)
 
-\`\`\`bash
+```bash
 cp .env.example .env
-\`\`\`
+```
 
 The default configuration should work for local development.
 
@@ -108,36 +108,36 @@ The default configuration should work for local development.
 You'll need two terminal windows:
 
 **Terminal 1 - Backend:**
-\`\`\`bash
+```bash
 cd server
 npm run dev
-\`\`\`
+```
 
 The server will start on `http://localhost:3001`
 
 **Terminal 2 - Frontend:**
-\`\`\`bash
+```bash
 cd client
 npm run dev
-\`\`\`
+```
 
 The client will start on `http://localhost:5173`
 
 ### Production Build
 
 **Backend:**
-\`\`\`bash
+```bash
 cd server
 npm run build
 npm start
-\`\`\`
+```
 
 **Frontend:**
-\`\`\`bash
+```bash
 cd client
 npm run build
 npm run preview
-\`\`\`
+```
 
 ## Usage
 
@@ -157,7 +157,7 @@ npm run preview
 
 ## Project Structure
 
-\`\`\`
+```
 DiscordStats/
 ├── client/                 # Frontend React application
 │   ├── src/
@@ -182,39 +182,39 @@ DiscordStats/
 │   └── package.json
 │
 └── README.md
-\`\`\`
+```
 
 ## API Endpoints
 
 ### Guild Stats
-\`\`\`
+```
 GET /api/discord/stats/guild/:guildId
-\`\`\`
+```
 Returns server statistics including member count, channels, roles, etc.
 
 ### Message Stats
-\`\`\`
+```
 GET /api/discord/stats/messages/:guildId?limit=100
-\`\`\`
+```
 Returns message analytics including activity by hour, top users, and emoji usage.
 
 ### User Activity
-\`\`\`
+```
 GET /api/discord/stats/user/:userId?guildId=xxx
-\`\`\`
+```
 Returns user activity data for a specific user in a guild.
 
 ### Auth URL
-\`\`\`
+```
 GET /api/discord/auth/url
-\`\`\`
+```
 Returns Discord OAuth2 authorization URL.
 
 ### Token Exchange
-\`\`\`
+```
 POST /api/discord/auth/token
 Body: { "code": "oauth_code" }
-\`\`\`
+```
 Exchanges OAuth2 code for access token.
 
 ## Troubleshooting
