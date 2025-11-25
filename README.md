@@ -51,7 +51,7 @@ Before you begin, ensure you have:
 6. Go to the "OAuth2" section and copy your Client ID and Client Secret
 7. Go to OAuth2 > URL Generator:
    - Select scopes: `bot`
-   - Select bot permissions: `Read Messages/View Channels`, `Read Message History`
+   - Select bot permissions: `View Channels` (General Permissions), `Read Message History` (Text Permissions)
    - Copy the generated URL and use it to invite the bot to your server
 
 ## Installation
@@ -63,20 +63,22 @@ git clone <repository-url>
 cd DiscordStats
 ```
 
-### 2. Install server dependencies
+### 2. Install dependencies
 
 ```bash
-cd server
 npm install
+npm run install:all
 ```
+
+This installs root dependencies (including `concurrently` for running both servers) and all dependencies for both the client and server.
 
 ### 3. Configure server environment
 
 ```bash
-cp .env.example .env
+cp server/.env.example server/.env
 ```
 
-Edit `.env` and add your Discord credentials:
+Edit `server/.env` and add your Discord credentials:
 
 ```env
 DISCORD_BOT_TOKEN=your_bot_token_here
@@ -86,17 +88,10 @@ DISCORD_REDIRECT_URI=http://localhost:5173/auth/callback
 PORT=3001
 ```
 
-### 4. Install client dependencies
+### 4. Configure client environment (optional)
 
 ```bash
-cd ../client
-npm install
-```
-
-### 5. Configure client environment (optional)
-
-```bash
-cp .env.example .env
+cp client/.env.example client/.env
 ```
 
 The default configuration should work for local development.
@@ -105,23 +100,25 @@ The default configuration should work for local development.
 
 ### Development Mode
 
-You'll need two terminal windows:
+From the project root, run both frontend and backend concurrently:
 
-**Terminal 1 - Backend:**
 ```bash
-cd server
 npm run dev
 ```
 
-The server will start on `http://localhost:3001`
+This starts:
+- Backend server on `http://localhost:3002`
+- Frontend dev server on `http://localhost:5173`
 
-**Terminal 2 - Frontend:**
+Alternatively, run them separately in two terminal windows:
+
 ```bash
-cd client
-npm run dev
-```
+# Terminal 1 - Backend
+npm run dev --prefix server
 
-The client will start on `http://localhost:5173`
+# Terminal 2 - Frontend
+npm run dev --prefix client
+```
 
 ### Production Build
 

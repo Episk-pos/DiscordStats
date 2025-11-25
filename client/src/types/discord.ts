@@ -1,4 +1,4 @@
-export interface GuildStats {
+export type GuildStats = {
   name: string;
   memberCount: number;
   onlineMembers: number;
@@ -10,7 +10,7 @@ export interface GuildStats {
   boostCount: number;
 }
 
-export interface MessageStats {
+export type MessageStats = {
   totalMessages: number;
   messagesByUser: Record<string, number>;
   messagesByChannel: Record<string, number>;
@@ -19,7 +19,7 @@ export interface MessageStats {
   topEmojis: Array<{ emoji: string; count: number }>;
 }
 
-export interface UserActivity {
+export type UserActivity = {
   username: string;
   displayName: string;
   joinedAt: string;

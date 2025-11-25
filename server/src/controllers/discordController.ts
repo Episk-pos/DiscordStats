@@ -11,13 +11,33 @@ const client = new Client({
 });
 
 // Initialize Discord bot
+let botReady = false;
+
+client.on('ready', () => {
+  console.log(`Discord bot logged in as ${client.user?.tag}`);
+  botReady = true;
+});
+
+client.on('error', (error) => {
+  console.error('Discord client error:', error);
+});
+
 if (process.env.DISCORD_BOT_TOKEN) {
-  client.login(process.env.DISCORD_BOT_TOKEN).catch(console.error);
+  client.login(process.env.DISCORD_BOT_TOKEN).catch((error) => {
+    console.error('Failed to login to Discord:', error.message);
+  });
+} else {
+  console.error('DISCORD_BOT_TOKEN is not set!');
 }
 
 export const getGuildStats = async (req: Request, res: Response) => {
   try {
+    if (!botReady) {
+      return res.status(503).json({ error: 'Discord bot is not ready yet' });
+    }
+
     const { guildId } = req.params;
+    console.log(`Fetching stats for guild: ${guildId}`);
     const guild = await client.guilds.fetch(guildId);
 
     if (!guild) {

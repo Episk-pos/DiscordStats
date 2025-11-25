@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { GuildStats, MessageStats, UserActivity } from '../types/discord';
+import type { GuildStats, MessageStats, UserActivity } from '../types/discord';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3002/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,

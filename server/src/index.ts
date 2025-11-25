@@ -1,9 +1,10 @@
+import dotenv from 'dotenv';
+import path from 'path';
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
+
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import discordRoutes from './routes/discord';
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;

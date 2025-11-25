@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { discordApi } from '../services/api';
-import { GuildStats, MessageStats } from '../types/discord';
+import type { GuildStats, MessageStats } from '../types/discord';
 import { TrendingUp, Users, MessageSquare, Award, Activity } from 'lucide-react';
 
 const COLORS = ['#5865f2', '#57f287', '#fee75c', '#eb459e', '#ed4245', '#00b0f4'];
