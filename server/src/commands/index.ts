@@ -1,6 +1,4 @@
-import { Message } from 'discord.js';
-import { parseCommand } from './parser';
-import { formatHelp, errorMessage } from './responses';
+import { ChatInputCommandInteraction } from 'discord.js';
 import {
   handleStart,
   handleEnd,
@@ -10,14 +8,13 @@ import {
   handleLink,
   handleMode,
   handleRecord,
-} from './session';
+} from './handlers/session';
 import {
   handleNext,
   handleSpeaker,
   handleClear,
   handleQueue,
-  handleClearQueue,
-} from './speaker';
+} from './handlers/speaker';
 import {
   handleHand,
   handlePoint,
@@ -26,118 +23,140 @@ import {
   handleDisagree,
   handleAway,
   handleBack,
-} from './signals';
-import { handleAgenda } from './agenda';
-import { handleSfx } from './sfx';
+  clearSessionSignals,
+  clearUserSignal,
+} from './handlers/signals';
+import {
+  handleAgenda,
+  handleAgendaAdd,
+  handleAgendaNext,
+  handleAgendaDone,
+  handleAgendaSkip,
+} from './handlers/agenda';
+import { handleSfx, handleSfxPlay } from './handlers/sfx';
+import { errorMessage } from './responses';
 
 /**
- * Main command handler - routes messages to appropriate command handlers
+ * Route slash command interactions to appropriate handlers
  */
-export async function handleCommand(message: Message): Promise<void> {
-  // Ignore bot messages
-  if (message.author.bot) return;
+export async function handleSlashCommand(interaction: ChatInputCommandInteraction): Promise<void> {
+  // Only handle /rr commands
+  if (interaction.commandName !== 'rr') {
+    return;
+  }
 
-  // Parse the command
-  const parsed = parseCommand(message);
-  if (!parsed) return;
+  const subcommand = interaction.options.getSubcommand();
 
   try {
-    switch (parsed.command) {
+    switch (subcommand) {
       // Session commands
       case 'start':
-        await handleStart(message, parsed);
+        await handleStart(interaction);
         break;
       case 'end':
-        await handleEnd(message);
+        await handleEnd(interaction);
         break;
       case 'pause':
-        await handlePause(message);
+        await handlePause(interaction);
         break;
       case 'resume':
-        await handleResume(message);
+        await handleResume(interaction);
         break;
       case 'status':
-        await handleStatus(message);
+        await handleStatus(interaction);
         break;
       case 'link':
-        await handleLink(message);
+        await handleLink(interaction);
         break;
 
       // Mode and recording
       case 'mode':
-        await handleMode(message, parsed);
+        await handleMode(interaction);
         break;
       case 'record':
-        await handleRecord(message, parsed);
+        await handleRecord(interaction);
         break;
 
       // Speaker commands
       case 'next':
-        await handleNext(message);
+        await handleNext(interaction);
         break;
       case 'speaker':
-        await handleSpeaker(message, parsed);
+        await handleSpeaker(interaction);
         break;
       case 'clear':
-        await handleClear(message);
+        await handleClear(interaction);
         break;
       case 'queue':
-        await handleQueue(message);
-        break;
-      case 'clearqueue':
-        await handleClearQueue(message);
+        await handleQueue(interaction);
         break;
 
       // Signal commands
       case 'hand':
-        await handleHand(message);
+        await handleHand(interaction);
         break;
       case 'point':
-        await handlePoint(message, parsed);
+        await handlePoint(interaction);
         break;
       case 'question':
-        await handleQuestion(message);
+        await handleQuestion(interaction);
         break;
       case 'agree':
-        await handleAgree(message);
+        await handleAgree(interaction);
         break;
       case 'disagree':
-        await handleDisagree(message);
+        await handleDisagree(interaction);
         break;
       case 'away':
-        await handleAway(message);
+        await handleAway(interaction);
         break;
       case 'back':
-        await handleBack(message);
+        await handleBack(interaction);
         break;
 
       // Agenda commands
       case 'agenda':
-        await handleAgenda(message, parsed);
+        await handleAgenda(interaction);
+        break;
+      case 'agenda-add':
+        await handleAgendaAdd(interaction);
+        break;
+      case 'agenda-next':
+        await handleAgendaNext(interaction);
+        break;
+      case 'agenda-done':
+        await handleAgendaDone(interaction);
+        break;
+      case 'agenda-skip':
+        await handleAgendaSkip(interaction);
         break;
 
       // Sound effect commands
       case 'sfx':
-        await handleSfx(message, parsed);
+        await handleSfx(interaction);
+        break;
+      case 'sfx-play':
+        await handleSfxPlay(interaction);
         break;
 
-      // Help
-      case 'help':
-        const embed = formatHelp();
-        await message.reply({ embeds: [embed] });
-        break;
-
-      // Unknown command
       default:
-        await message.reply(
-          errorMessage(`Unknown command: \`${parsed.command}\`. Use \`!rr help\` for a list of commands.`)
-        );
+        await interaction.reply({
+          content: errorMessage(`Unknown command: \`${subcommand}\``),
+          ephemeral: true,
+        });
     }
   } catch (error) {
-    console.error('Command error:', error);
-    await message.reply(errorMessage('An error occurred while processing your command.'));
+    console.error('Slash command error:', error);
+    const errorResponse = errorMessage('An error occurred while processing your command.');
+
+    if (interaction.replied || interaction.deferred) {
+      await interaction.followUp({ content: errorResponse, ephemeral: true });
+    } else {
+      await interaction.reply({ content: errorResponse, ephemeral: true });
+    }
   }
 }
 
-export { parseCommand } from './parser';
-export { clearSessionSignals, clearUserSignal } from './signals';
+// Re-export utilities
+export { clearSessionSignals, clearUserSignal };
+export { getCommandsJSON } from './definitions';

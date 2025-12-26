@@ -3,8 +3,9 @@ import {
   GatewayIntentBits,
   Events,
   VoiceState,
+  ChatInputCommandInteraction,
 } from 'discord.js';
-import { handleCommand } from '../../commands';
+import { handleSlashCommand } from '../../commands';
 import { handleVoiceStateUpdate } from '../voice';
 
 // Discord client singleton
@@ -33,6 +34,7 @@ export function initializeBot(): Client {
   // Ready event
   client.on(Events.ClientReady, (readyClient) => {
     console.log(`Discord bot logged in as ${readyClient.user.tag}`);
+    console.log(`Bot is in ${readyClient.guilds.cache.size} guild(s)`);
     botReady = true;
   });
 
@@ -41,9 +43,10 @@ export function initializeBot(): Client {
     console.error('Discord client error:', error);
   });
 
-  // Message handling for commands
-  client.on(Events.MessageCreate, async (message) => {
-    await handleCommand(message);
+  // Slash command handling
+  client.on(Events.InteractionCreate, async (interaction) => {
+    if (!interaction.isChatInputCommand()) return;
+    await handleSlashCommand(interaction as ChatInputCommandInteraction);
   });
 
   // Voice state updates for presence tracking

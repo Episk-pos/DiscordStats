@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "tsx watch --env-file=.env src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "register-commands": "tsx --env-file=.env src/commands/register.ts"
   },
   "keywords": [
     "discord",
@@ -16,6 +17,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@discordjs/builders": "^1.13.1",
+    "@discordjs/rest": "^2.6.0",
     "@discordjs/voice": "^0.19.0",
     "axios": "^1.6.2",
     "better-sqlite3": "^12.5.0",
