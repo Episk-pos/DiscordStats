@@ -1,38 +1,11 @@
 import { Request, Response } from 'express';
-import { Client, GatewayIntentBits, Guild, TextChannel } from 'discord.js';
-
-const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.GuildMembers,
-    GatewayIntentBits.MessageContent,
-  ],
-});
-
-// Initialize Discord bot
-let botReady = false;
-
-client.on('ready', () => {
-  console.log(`Discord bot logged in as ${client.user?.tag}`);
-  botReady = true;
-});
-
-client.on('error', (error) => {
-  console.error('Discord client error:', error);
-});
-
-if (process.env.DISCORD_BOT_TOKEN) {
-  client.login(process.env.DISCORD_BOT_TOKEN).catch((error) => {
-    console.error('Failed to login to Discord:', error.message);
-  });
-} else {
-  console.error('DISCORD_BOT_TOKEN is not set!');
-}
+import { TextChannel } from 'discord.js';
+import { getClient, isBotReady } from '../services/discord';
 
 export const getGuildStats = async (req: Request, res: Response) => {
   try {
-    if (!botReady) {
+    const client = getClient();
+    if (!client || !isBotReady()) {
       return res.status(503).json({ error: 'Discord bot is not ready yet' });
     }
 
@@ -68,6 +41,11 @@ export const getGuildStats = async (req: Request, res: Response) => {
 
 export const getUserActivity = async (req: Request, res: Response) => {
   try {
+    const client = getClient();
+    if (!client || !isBotReady()) {
+      return res.status(503).json({ error: 'Discord bot is not ready yet' });
+    }
+
     const { userId } = req.params;
     const { guildId } = req.query;
 
@@ -100,6 +78,11 @@ export const getUserActivity = async (req: Request, res: Response) => {
 
 export const getMessageStats = async (req: Request, res: Response) => {
   try {
+    const client = getClient();
+    if (!client || !isBotReady()) {
+      return res.status(503).json({ error: 'Discord bot is not ready yet' });
+    }
+
     const { guildId } = req.params;
     const { limit = '100', channelId } = req.query;
 
